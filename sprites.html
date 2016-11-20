@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+        <title>Sprite Tool</title>
+        <script type="text/javascript" src="jquery-3.1.1.min.js"></script>
+        <script type="text/javascript" src="sprites.js"></script>
+        <style type="text/css" media="screen">
+        #page {min-width:1040px;}
+        input.pixel {width:20px; height:20px; font-family:monospace; text-align:center; margin:0; padding:0; box-sizing: border-box;}
+        div.row {width:640px; height:20px;}
+        #rightColumn {float:right; width:400px;}
+        #generatedCode {width:390px;}
+        #generatedJson {width:390px;}
+        #generatedCodeText {width:390px; height:150px; font-family:monospace;}
+        #generatedJsonText {width:390px; height:150px; font-family:monospace;}
+        #debugText {width:390px; height:150px; font-family:monospace;}
+        #grid {width:640px; height:640px;}
+        #gridSize {margin-top:20px;}
+        #colorPalette {margin-top:20px;}
+        input.colpal {width:40px; font-family:monospace;}
+        div.colpalSample {width:40px; height:10px; border:solid #cccccc 1px; display:inline;}
+        h1 {font-size:125%; padding:0; margin:0;}
+        </style>
+    </head>
+    <body id="sprites" onload="doLoadFinished();">
+        <form onsubmit="return false;">
+        <div id="page">
+            <div id="rightColumn">
+                <div id="generatedCode">
+                    <h1>Generated C Code</h1>
+                    <textarea id="generatedCodeText"></textarea>
+                </div>
+                <div id="generatedJson">
+                    <h1>Generated Json</h1>
+                    <textarea id="generatedJsonText"></textarea>
+                    <input type="button" value="Load Pasted JSON" onclick="return loadJson();" />
+                </div>
+                <!-- textarea id="debugText"></textarea -->
+            </div>
+            <div id="grid"></div>
+            <div id="gridSize">Grid Size: <label><input type="radio" name="gridSize" value="32" checked="checked" onchange="doSizeChange();" /> 32x32</label> <label><input type="radio" name="gridSize" value="16" onchange="doSizeChange();" /> 16x16</label></div>
+            <div id="colorPalette">
+                <h1 id="colorPaletteHeader">Color Palette</h1>
+                <p>Values from 00 to FF</p>
+                <div id="colorPaletteForm"></div>
+            </div>
+        </div>
+        </form>
+    </body>
+</html>
