@@ -3,7 +3,7 @@
 #include <map>
 #include <gd.h>
 
-#define DEBUG_PALETTE
+//#define DEBUG_PALETTE
 
 typedef unsigned int uint32_t;
 
