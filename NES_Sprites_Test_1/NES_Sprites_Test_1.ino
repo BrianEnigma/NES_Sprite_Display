@@ -11,7 +11,7 @@
 
 RGBmatrixPanel matrix(A, B, C, D, CLK, LAT, OE, false);
 
-static const uint32_t TEST_PATTERN_PALETTE[] = {0xff0000, 0x00ff00, 0x0000ff, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000};
+static const uint32_t TEST_PATTERN_PALETTE[] PROGMEM = {0xff0000, 0x00ff00, 0x0000ff, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000};
 
 static const int8_t TEST_PATTERN_FRAME[] PROGMEM = {
     0x12,0x31,0x23,0x12,0x31,0x23,0x12,0x31,
@@ -52,9 +52,11 @@ static const int8_t TEST_PATTERN_FRAME_BYTE[] PROGMEM = {
 // We're making these globals to save stack space.
 int row;                        ///< Row count, when looping.
 int col;                        ///< Column count, when looping.
-unsigned long colorValue;       ///< The actual RRGGBB hex color value.
 unsigned char paletteIndex;     ///< Index into the color palette.
 unsigned long pixelPosition;    ///< Index into the pixel array.
+unsigned char red;              ///< Red color value, pulled from the palette.
+unsigned char green;            ///< Green color value, pulled from the palette.
+unsigned char blue;             ///< Blue color value, pulled from the palette.
 
 void setup() 
 {
@@ -62,40 +64,48 @@ void setup()
     matrix.fillScreen(matrix.Color333(0, 0, 0));
 }
 
-void draw16x16ByNibble(const unsigned char *pixels, const unsigned long *palette)
+void draw16x16ByNibble(const unsigned char *pixels, const void *palette)
 {
     pixelPosition = 0;
     for (row = 0; row < 16; row++)
     {
         for (col = 0; col < 16; col++)
         {
-            colorValue = 0; // Assume transparent is black.
+            red = green = blue = 0; // Assume transparent is black.
             paletteIndex = pgm_read_byte(pixels + pixelPosition); // Find the byte containing the two pixels.
             if (0 == col % 2)
                 paletteIndex = paletteIndex >> 4;
             else
                 paletteIndex = paletteIndex & 0x0F;
             if (paletteIndex > 0 && paletteIndex < 16)
-                colorValue = *(palette + paletteIndex - 1);
-            matrix.drawPixel(row, col, matrix.Color888((colorValue >> 16) & 0xFF, (colorValue >> 8) & 0xFF, colorValue & 0xFF)); 
+            {
+                red = pgm_read_byte(palette + 4 * (paletteIndex - 1) + 2);
+                green = pgm_read_byte(palette + 4 * (paletteIndex - 1) + 1);
+                blue = pgm_read_byte(palette + 4 * (paletteIndex - 1) + 0);
+            }
+            matrix.drawPixel(row, col, matrix.Color888(red, green, blue)); 
             if (col % 2 == 1)
                 pixelPosition++;
         }
     }
 }
 
-void draw16x16ByByte(const int8_t *pixels, const unsigned long *palette)
+void draw16x16ByByte(const int8_t *pixels, const void *palette)
 {
     pixelPosition = 0;
     for (row = 0; row < 16; row++)
     {
         for (col = 0; col < 16; col++)
         {
-            colorValue = 0; // Assume transparent is black.
+            red = green = blue = 0; // Assume transparent is black.
             paletteIndex = pgm_read_byte(pixels + pixelPosition); // Find the byte containing the pixel.
             if (paletteIndex > 0 && paletteIndex < 16)
-                colorValue = palette[paletteIndex - 1];
-            matrix.drawPixel(row, col, matrix.Color888((colorValue >> 16) & 0xFF, (colorValue >> 8) & 0xFF, colorValue & 0xFF)); 
+            {
+                red = pgm_read_byte(palette + 4 * (paletteIndex - 1) + 2);
+                green = pgm_read_byte(palette + 4 * (paletteIndex - 1) + 1);
+                blue = pgm_read_byte(palette + 4 * (paletteIndex - 1) + 0);
+            }
+            matrix.drawPixel(row, col, matrix.Color888(red, green, blue)); 
             pixelPosition += 1;
         }
     }
@@ -108,15 +118,15 @@ void drawTestPattern(const unsigned char *pixels, const unsigned long *palette)
     {
         for (col = 0; col < 16; col++)
         {
-            colorValue = 0; // Assume transparent is black.
+            red = green = blue = 0; // Assume transparent is black.
             switch(counter)
             {
-                case 0: colorValue = 0xff0000; break;
-                case 1: colorValue = 0x00ff00; break;
-                case 2: colorValue = 0x0000ff; break;
+                case 0: red = 0xFF; break;
+                case 1: green = 0xFF; break;
+                case 2: blue = 0xFF; break;
             }
             counter = (counter + 1) % 3;
-            matrix.drawPixel(col, row, matrix.Color888((colorValue >> 16) & 0xFF, (colorValue >> 8) & 0xFF, colorValue & 0xFF)); 
+            matrix.drawPixel(col, row, matrix.Color888(red, green, blue)); 
         }
     }
 }
