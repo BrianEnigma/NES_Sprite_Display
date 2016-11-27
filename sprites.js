@@ -142,9 +142,9 @@ function loadJson()
     for (var i = 1; i <= MAX_PAL && i <= palette.length; i++)
     {
         color = palette[i - 1];
-        $("#col" + i + "r").val(color[0]);
-        $("#col" + i + "g").val(color[1]);
-        $("#col" + i + "b").val(color[2]);
+        $("#col" + i + "r").val(color[0].toString(16));
+        $("#col" + i + "g").val(color[1].toString(16));
+        $("#col" + i + "b").val(color[2].toString(16));
     }
     i = 0;
     for (var row = 0; row < MAX_ROW; row++)
