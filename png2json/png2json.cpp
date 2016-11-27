@@ -134,11 +134,11 @@ void generateImage(gdImagePtr im, const std::map<uint32_t, uint32_t> &colorMap)
     printf("]");
 }
 
-int convert(const char *filename)
+int convert(const char *paletteFilename, const char *imageFilename)
 {
     std::set<uint32_t> colors;
     std::map<uint32_t, uint32_t> colorMap;
-    FILE *f = fopen(filename, "rb");
+    FILE *f = fopen(paletteFilename, "rb");
     gdImagePtr im = gdImageCreateFromPng(f);
     if (!f || !im)
     {
@@ -152,6 +152,17 @@ int convert(const char *filename)
         return 1;
     }
     buildColorMap(im, colors, colorMap);
+    gdImageDestroy(im);
+    fclose(f);
+
+    f = fopen(imageFilename, "rb");
+    im = gdImageCreateFromPng(f);
+    if (!f || !im)
+    {
+        printf("Error reading input file.\n");
+        return 1;
+    }
+
     printf("{");
     generatePalette(im, colorMap);
     generateImage(im, colorMap);
@@ -163,10 +174,10 @@ int convert(const char *filename)
 
 int main(int argc, char **argv)
 {
-    if (2 != argc)
+    if (2 != argc && 3 != argc)
     {
         printf("Error: put png file to read on command line.\n");
         return 1;
     }
-    return convert(argv[1]);
+    return convert(argv[1], 3 == argc ? argv[2] : argv[1]);
 }
