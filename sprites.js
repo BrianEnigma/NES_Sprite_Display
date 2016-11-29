@@ -80,7 +80,7 @@ function updateAll()
     dText = "";
     // Display palette sample colors
     cCode += "// Palette values start at 1. (0 = transparent)\n";
-    cCode += "unsigned int palette[] = {";
+    cCode += "static const uint32_t THING_PALETTE[] PROGMEM = {";
     jCode += '{"palette":[';
     for (var color = 1; color <= MAX_PAL; color++)
     {
@@ -98,7 +98,7 @@ function updateAll()
     
     // Display pixel bg as color
     cCode += "// Each byte represents two pixels, the first in the upper nibble\n";
-    cCode += "unsigned char pixels[] = {";
+    cCode += "static const int8_t THING_FRAME_1[] PROGMEM = {";
     jCode += '"pixels":[';
     for (var row = 0; row < MAX_ROW; row++)
     {
@@ -124,7 +124,7 @@ function updateAll()
                 jCode += ",";
             //dText += idString + " => " + paletteNumber + " " + colorArray[paletteNumber] + "\n";
         }
-        cCode += "\n";
+        //cCode += "\n";
         jCode += "\n";
     }
     cCode += "};";
