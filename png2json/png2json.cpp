@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <vector>
+#include <string>
 #include <set>
 #include <map>
 #include <gd.h>
@@ -11,7 +13,6 @@ void buildColorSet(gdImagePtr im, std::set<uint32_t> &list)
 {
     size_t width = gdImageSX(im);
     size_t height = gdImageSY(im);
-    list.clear();
     for (size_t y = 0; y < height; y++)
     {
         for (size_t x = 0; x < width; x++)
@@ -134,50 +135,68 @@ void generateImage(gdImagePtr im, const std::map<uint32_t, uint32_t> &colorMap)
     printf("]");
 }
 
-int convert(const char *paletteFilename, const char *imageFilename)
+int convert(const std::vector<std::string> &filenameList)
 {
     std::set<uint32_t> colors;
     std::map<uint32_t, uint32_t> colorMap;
-    FILE *f = fopen(paletteFilename, "rb");
-    gdImagePtr im = gdImageCreateFromPng(f);
-    if (!f || !im)
+
+    // Create a list of all unique colors.
+    for (const std::string &filename : filenameList)
     {
-        printf("Error reading input file.\n");
-        return 1;
+        FILE *f = fopen(filename.c_str(), "rb");
+        gdImagePtr im = gdImageCreateFromPng(f);
+        if (!f || !im)
+        {
+            printf("Error reading input file %s.\n", filename.c_str());
+            return 1;
+        }
+        buildColorSet(im, colors);
+        gdImageDestroy(im);
+        fclose(f);
     }
-    buildColorSet(im, colors);
     if (colors.size() > 16)
     {
         printf("The color table had too many (%d) entries.", (unsigned int) colors.size());
         return 1;
     }
-    buildColorMap(im, colors, colorMap);
-    gdImageDestroy(im);
-    fclose(f);
 
-    f = fopen(imageFilename, "rb");
-    im = gdImageCreateFromPng(f);
-    if (!f || !im)
+    // Turn color list into color palette table.
     {
-        printf("Error reading input file.\n");
-        return 1;
+        gdImagePtr im = gdImageCreateTrueColor(10, 10);
+        buildColorMap(im, colors, colorMap);
+        gdImageDestroy(im);
     }
 
-    printf("{");
-    generatePalette(im, colorMap);
-    generateImage(im, colorMap);
-    printf("}");
-    gdImageDestroy(im);
-    fclose(f);
+    for (const std::string &filename : filenameList)
+    {
+        FILE *f = fopen(filename.c_str(), "rb");
+        gdImagePtr im = gdImageCreateFromPng(f);
+        if (!f || !im)
+        {
+            printf("Error reading input file.\n");
+            return 1;
+        }
+
+        printf("{");
+        printf("\"file\": \"%s\",\n", filename.c_str());
+        generatePalette(im, colorMap);
+        generateImage(im, colorMap);
+        printf("}\n\n");
+        gdImageDestroy(im);
+        fclose(f);
+    }
     return 0;
 }
 
 int main(int argc, char **argv)
 {
-    if (2 != argc && 3 != argc)
+    std::vector<std::string> filenameList;
+    for (int i = 1; i < argc; i++)
+        filenameList.push_back(argv[i]);
+    if (filenameList.empty())
     {
-        printf("Error: put png file to read on command line.\n");
+        printf("Error: put png file(s) to read on command line.\n");
         return 1;
     }
-    return convert(argv[1], 3 == argc ? argv[2] : argv[1]);
+    return convert(filenameList);
 }
