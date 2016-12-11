@@ -4,6 +4,10 @@
 
 The NES Sprite Display project is an Arduino-based program to display assorted NES-era game sprites (primarily Super Mario and Zelda) on a large 32x32 LED matrix. 
 
+![NES Sprite Display](nes_sprites-225px-8fps.gif)
+
+_(Above: a rough approximation of the LED matrix animation. It's a little slow and choppy due to the synchronization between the gif framerate and the matrix framerate. Trust me, it looks a lot nicer in person.)_
+
 The inspiration for this project came from a couple of different sources. Portland has an arcade bar, [Ground Kontrol](http://groundkontrol.com/), that offers a [Pac Man clock](http://groundkontrol.com/store/) for sale. This looks like it's probably a 32x16 LED matrix. It displays the time, with refreshes occurring via ghost and Pac-Man animations. ($75, while supplies last.) Second, I saw a vendor at the [Portland Retro Gaming Expo](http://www.retrogamingexpo.com/) (sorry, I didn't catch which one) that offered a smaller 16x16 LED matrix, in a nice wooden display case, that did similar animations. This was several hundred dollars. I figured I'd try my hand at making something fun, influenced by these two products.
 
 This project is copyright 2016 by Brian Enigma, <brian@netninja.com>, and lives at <https://github.com/BrianEnigma/NES_Sprite_Display>. It is licensed under a [Creative Commons Attribution-ShareAlike 4.0 International License](http://creativecommons.org/licenses/by-sa/4.0/).
