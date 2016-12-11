@@ -16,3 +16,7 @@ TODO: write an overview here.
 - Use to display a clock?
 - Laser cut bezel?
 - Laser cut diffuser cover, like a thin white translucent sheet of acrylic?
+
+
+
+<https://learn.adafruit.com/32x16-32x32-rgb-led-matrix/overview>
