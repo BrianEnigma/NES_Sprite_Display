@@ -25,6 +25,10 @@ You will likely need some other support gear, if you do not already have it:
 - If using the Nootropic board, an [FTDI Friend](https://www.adafruit.com/products/284) or [FTDI cable](https://www.adafruit.com/products/70) to level-convert USB down to TTL.
 - Soldering iron and other electronics-building gear. You'll need to assemble the Nootropic board, wire up the matrix to power, etc.
 
+##Phase Two: Realtime Clock
+
+TODO: Document hooking up the realtime clock ([Adafruit DS3231 breakout board](https://www.adafruit.com/product/3013)) to the Arduino.
+
 ##Project Files
 
 - `inspiration` — Sprite sheets I've downloaded from various places.
@@ -36,7 +40,12 @@ You will likely need some other support gear, if you do not already have it:
     - `NES_Sprites_Test_2` — Test drawing a two-frame 16x16 animation, read as a half-byte per pixel from Flash, rendered at 32x32.
     - `NES_Sprites_Test_3` — Same as 2, but optimizing reads into the palette Flash.
     - `NES_Sprites_Test_4` — Adding a routine to paint 16x32 sprites (such as the Piranha Plant), centered in the 32x32 display.
-- `NES_Sprites_1` — The final application, which loops through a collection of sprite animations.
+    - **Phase Two:**
+    - `NES_Sprites_Test_5` — Combination of RGB drawing library and RTC library.
+    - `NES_Sprites_Test_6` — Drawing time with a custom font.
+    - `NES_Sprites_Test_7` — Drawing time “behind” a sprite without double-buffering.
+- `NES_Sprites_1` — The final application without a clock, which loops through a collection of sprite animations.
+- `NES_Sprites_2` — The final application with realtime clock (RTC) display. animations.
 
 ##Workflow for Creating Sprites
 
