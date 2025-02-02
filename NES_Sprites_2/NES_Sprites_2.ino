@@ -162,6 +162,7 @@ bool getPixelForTime(uint8_t x, uint8_t y)
         digit = minutes % 10;
         x -= 14;
     }
+#ifdef PRINT_SECONDS    
     else if (18 == x)
     {
         digit = -2;
@@ -176,6 +177,7 @@ bool getPixelForTime(uint8_t x, uint8_t y)
         digit = seconds % 10;
         x -= 24;
     }
+#endif    
     if (-1 == digit)
         return false;
     if (-2 == digit)
@@ -205,10 +207,13 @@ void draw32x32ByNibble(const unsigned char *pixels, const void *palette)
             mixedColor = matrix.Color888(red, green, blue);
 #ifdef CLOCK_BEHIND
             if (0 == mixedColor && getPixelForTime(col, row))
-#else            
-            if (getPixelForTime(col, row))
-#endif            
                 mixedColor = CLOCK_COLOR;
+#else            
+            if (col > 0 && row > 0 && getPixelForTime(col - 1, row - 1))
+                mixedColor = 0x00;
+            if (getPixelForTime(col, row))
+                mixedColor = CLOCK_COLOR;
+#endif            
             matrix.drawPixel(col, row, mixedColor); 
             if (col % 2 == 1)
                 pixelPosition++;
@@ -253,11 +258,14 @@ void draw16x32ByNibble(const unsigned char *pixels, const void *palette)
             }
             mixedColor = matrix.Color888(red, green, blue);
 #ifdef CLOCK_BEHIND
-            if (0 == mixedColor && getPixelForTime(col + 8, row))
-#else
-            if (getPixelForTime(col + 8, row))
-#endif            
+            if (0 == mixedColor && getPixelForTime(col, row))
                 mixedColor = CLOCK_COLOR;
+#else            
+            if (col > 0 && row > 0 && getPixelForTime(col - 1, row - 1))
+                mixedColor = 0x00;
+            if (getPixelForTime(col, row))
+                mixedColor = CLOCK_COLOR;
+#endif            
             matrix.drawPixel(col + 8, row, mixedColor); 
             if (col % 2 == 1)
                 pixelPosition++;
@@ -293,6 +301,15 @@ void draw16x16ByNibble(const unsigned char *pixels, const void *palette)
             if (0 == mixedColor)
 #endif            
             {
+                // Shadow
+                if (row > 0 && col > 0)
+                {
+                    if (getPixelForTime(col * 2     - 1, row * 2     - 1)) matrix.drawPixel(col * 2,     row * 2,     0x00); 
+                    if (getPixelForTime(col * 2 + 1 - 1, row * 2     - 1)) matrix.drawPixel(col * 2 + 1, row * 2,     0x00); 
+                    if (getPixelForTime(col * 2     - 1, row * 2 + 1 - 1)) matrix.drawPixel(col * 2,     row * 2 + 1, 0x00); 
+                    if (getPixelForTime(col * 2 + 1 - 1, row * 2 + 1 - 1)) matrix.drawPixel(col * 2 + 1, row * 2 + 1, 0x00); 
+                }
+                // Digits
                 if (getPixelForTime(col * 2,     row * 2))     matrix.drawPixel(col * 2,     row * 2,     CLOCK_COLOR); 
                 if (getPixelForTime(col * 2 + 1, row * 2))     matrix.drawPixel(col * 2 + 1, row * 2,     CLOCK_COLOR); 
                 if (getPixelForTime(col * 2,     row * 2 + 1)) matrix.drawPixel(col * 2,     row * 2 + 1, CLOCK_COLOR); 
@@ -563,6 +580,7 @@ void question(unsigned int cycles)
 
 void loop() 
 {
+    question(4);
     link(4);
     heart(4);
     chicken(4);
